@@ -13,7 +13,7 @@ This project is a tool for sending SMS messages for educational and security tes
 ## Requirements
 
 - Python 3.x
-- An account with an SMS sending service (e.g., Twilio, Textlocal).
+- An account with an SMS sending service (Textlocal).
 
 ## Installation
 
