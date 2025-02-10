@@ -14,6 +14,7 @@ Este proyecto es una herramienta para enviar mensajes SMS con fines educativos y
 
 - Python 3.x
 - Una cuenta en un servicio de envío de SMS (por ejemplo, Twilio).
+- Cambiar el nombre a (config.py)
 
 ## Instalación
 
