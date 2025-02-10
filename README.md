@@ -2,53 +2,51 @@
 
 ![SMS Phishing Sender](./img/smsimg.png)
 
-Este proyecto es una herramienta para enviar mensajes SMS con fines educativos y de prueba de seguridad. **No debe ser utilizado para actividades maliciosas o ilegales**.
+This project is a tool for sending SMS messages for educational and security testing purposes. **It should not be used for malicious or illegal activities**.
 
-## Características
+## Features
 
-- Envío de mensajes SMS a múltiples destinatarios.
-- Personalización del contenido del mensaje.
-- Registro de mensajes enviados.
+- Send SMS messages to multiple recipients.
+- Customize the content of the message.
+- Log sent messages.
 
-## Requisitos
+## Requirements
 
 - Python 3.x
-- Una cuenta en un servicio de envío de SMS (por ejemplo, Twilio).
-- Cambiar el nombre a (config.py)
+- An account with an SMS sending service (e.g., Twilio, Textlocal).
 
-## Instalación
+## Installation
 
-1. Clona el repositorio:
+1. Clone the repository:
     ```bash
-    git clone https://github.com/tu-usuario/SMS-PHISING.git
+    git clone https://github.com/your-username/SMS-PHISING.git
     cd SMS-PHISING
     ```
 
-2. Instala las dependencias:
+2. Install the dependencies:
     ```bash
     pip install -r requirements.txt
     ```
 
-3. Configura las credenciales del servicio de envío de SMS en el archivo `config.py`.
+3. Configure the SMS sending service credentials in the `config.py` file.
 
-## Uso
+## Usage
 
-1. Ejecuta el script principal:
+1. Run the main script:
     ```bash
     python send_sms.py
     ```
 
-2. Sigue las instrucciones en pantalla para enviar los mensajes.
+2. Follow the on-screen instructions to send the messages.
 
-## Contribuciones
+## Contributions
 
-Las contribuciones son bienvenidas. Por favor, abre un issue o envía un pull request.
+Contributions are welcome. Please open an issue or submit a pull request.
 
-## Licencia
+## License
 
-Este proyecto está licenciado bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
+This project is licensed under the MIT License. See the `LICENSE` file for more details.
 
-## Advertencia
+## Warning
 
-Este proyecto es solo para fines educativos. El uso indebido de esta herramienta puede ser ilegal. El autor no se hace responsable de cualquier daño causado por el uso de esta herramienta. 
 This project is for educational purposes only. Misuse of this tool may be illegal. The author is not responsible for any damage caused by the use of this tool.
