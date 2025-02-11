@@ -1,0 +1,8 @@
+# Ignorar el archivo de configuración
+config.py
+
+# Ignorar el entorno virtual
+.venv/
+
+# Ignorar los directorios de caché de Python
+__pycache__/

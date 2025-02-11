@@ -3,7 +3,9 @@ from concurrent.futures import ThreadPoolExecutor
 import urllib.request
 import urllib.parse
 import json
-from config import API_KEY, SENDER
+import tkinter as tk
+from tkinter import messagebox, filedialog
+from PIL import Image, ImageTk
 
 # Inicializa colorama
 init(autoreset=True)
@@ -26,14 +28,18 @@ def send_sms(api_key, number, sender, message, test_mode=False):
                 error_code = result.get("errors")[0].get("code")
                 handle_error(error_code)
             else:
-                print(Fore.GREEN + "SMS enviado correctamente.")
+                messagebox.showinfo("Éxito", "SMS enviado correctamente.")
                 print(Fore.CYAN + "Detalles:", result)
+                status_label.config(text="SMS enviado correctamente.", fg="green")
     except urllib.error.URLError as e:
-        print(Fore.RED + "Error de conexión:", e)
+        messagebox.showerror("Error", f"Error de conexión: {e}")
+        status_label.config(text=f"Error de conexión: {e}", fg="red")
     except json.JSONDecodeError:
-        print(Fore.RED + "Error al decodificar la respuesta de la API.")
+        messagebox.showerror("Error", "Error al decodificar la respuesta de la API.")
+        status_label.config(text="Error al decodificar la respuesta de la API.", fg="red")
     except Exception as e:
-        print(Fore.RED + "Error al enviar el SMS:", e)
+        messagebox.showerror("Error", f"Error al enviar el SMS: {e}")
+        status_label.config(text=f"Error al enviar el SMS: {e}", fg="red")
 
 # Función para manejar códigos de error específicos en SMS
 def handle_error(error_code):
@@ -47,51 +53,123 @@ def handle_error(error_code):
         32: "Formato de número inválido.",
         43: "Nombre del remitente inválido."
     }
-    print(Fore.RED + f"Error {error_code}: {error_messages.get(error_code, 'Error desconocido.')}")
+    messagebox.showerror("Error", f"Error {error_code}: {error_messages.get(error_code, 'Error desconocido.')}")
+    status_label.config(text=f"Error {error_code}: {error_messages.get(error_code, 'Error desconocido.')}", fg="red")
 
 # Función para mostrar el banner
 def mostrar_banner():
     banner = f"""
-
-   {Fore.CYAN}K - I - Z - 4 - R - U    
+   {Fore.CYAN}K I Z 4 R U    
 """
     print(banner)
 
-# Menú principal de la aplicación
-def main():
-    mostrar_banner()
-    print(Fore.YELLOW + "********** K-I-Z-4-R-U Comunicación **********")
-    while True:
-        print("\n" + Fore.BLUE + "Selecciona una opción:")
-        print(Fore.GREEN + "1." + Fore.YELLOW + " Enviar SMS")
-        print(Fore.RED + "2." + Fore.YELLOW + " Salir")
-        choice = input(Fore.CYAN + "Opción: " + Style.RESET_ALL)
-        
-        if choice == "1":
-            enviar_sms()
-        elif choice == "2":
-            print(Fore.CYAN + "Saliendo de la aplicación...")
-            break
-        else:
-            print(Fore.RED + "Opción no válida. Inténtalo de nuevo.")
-
-# Función para solicitar los datos del SMS y enviarlo
+# Función para enviar SMS desde la interfaz gráfica
 def enviar_sms():
-    print(Fore.YELLOW + "\n******** Enviar SMS ********")
+    api_key = entry_api_key.get()
+    sender = entry_sender.get()
+    number = entry_number.get()
+    message = text_message.get("1.0", tk.END).strip()
+    test_mode = test_mode_var.get()
     
-    number = input(Fore.CYAN + "Ingresa el número de teléfono (ej. +34XXXXXXXXX): " + Style.RESET_ALL)
+    if not api_key:
+        messagebox.showerror("Error", "La clave API es obligatoria.")
+        status_label.config(text="La clave API es obligatoria.", fg="red")
+        return
+    
+    if not sender:
+        messagebox.showerror("Error", "El remitente es obligatorio.")
+        status_label.config(text="El remitente es obligatorio.", fg="red")
+        return
+    
     if not number.startswith("+") or not number[1:].isdigit():
-        print(Fore.RED + "Formato de número inválido.")
+        messagebox.showerror("Error", "Formato de número inválido.")
+        status_label.config(text="Formato de número inválido.", fg="red")
         return
     
-    message = input(Fore.CYAN + "Escribe el mensaje que deseas enviar: " + Style.RESET_ALL)
     if len(message) > 765:
-        print(Fore.RED + "El mensaje es demasiado largo. Máximo 765 caracteres.")
+        messagebox.showerror("Error", "El mensaje es demasiado largo. Máximo 765 caracteres.")
+        status_label.config(text="El mensaje es demasiado largo. Máximo 765 caracteres.", fg="red")
         return
     
-    print(Fore.YELLOW + "\nEnviando mensaje...")
-    send_sms(API_KEY, number, SENDER, message)
+    send_sms(api_key, number, sender, message, test_mode)
 
+# Función para cerrar la ventana
+def cerrar_ventana():
+    root.destroy()
 
-if __name__ == "__main__":
-    main()
+# Función para limpiar los campos de entrada
+def limpiar_campos():
+    entry_api_key.delete(0, tk.END)
+    entry_sender.delete(0, tk.END)
+    entry_number.delete(0, tk.END)
+    text_message.delete("1.0", tk.END)
+    status_label.config(text="")
+
+# Función para copiar el mensaje al portapapeles
+def copiar_mensaje():
+    root.clipboard_clear()
+    root.clipboard_append(text_message.get("1.0", tk.END).strip())
+    root.update()  # Actualiza el portapapeles
+
+# Función para guardar el mensaje en un archivo
+def guardar_mensaje():
+    file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
+    if file_path:
+        with open(file_path, "w") as file:
+            file.write(text_message.get("1.0", tk.END).strip())
+
+# Función para cargar un mensaje desde un archivo
+def cargar_mensaje():
+    file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
+    if file_path:
+        with open(file_path, "r") as file:
+            text_message.delete("1.0", tk.END)
+            text_message.insert(tk.END, file.read())
+
+# Configuración de la interfaz gráfica
+root = tk.Tk()
+root.title("SMS KIZ4RU")
+root.geometry("600x700")
+root.configure(bg="#FFC107")  # Amarillo
+
+# Añadir imagen
+img = Image.open("./img/smsimg.png")
+img = img.resize((100, 100), Image.LANCZOS)
+photo = ImageTk.PhotoImage(img)
+tk.Label(root, image=photo, bg="#FFC107").pack(pady=10)
+
+tk.Label(root, text="KIZ4RU", font=("Helvetica", 16, "bold"), bg="#FFC107", fg="#FF0000").pack(pady=10)
+
+tk.Label(root, text="Clave API:", bg="#FFC107", fg="#FF0000").pack(pady=5)
+entry_api_key = tk.Entry(root, width=50)
+entry_api_key.pack(pady=5)
+
+tk.Label(root, text="Remitente:", bg="#FFC107", fg="#FF0000").pack(pady=5)
+entry_sender = tk.Entry(root, width=30)
+entry_sender.pack(pady=5)
+
+tk.Label(root, text="Número de teléfono (ej. +34XXXXXXXXX):", bg="#FFC107", fg="#FF0000").pack(pady=5)
+entry_number = tk.Entry(root, width=30)
+entry_number.pack(pady=5)
+
+tk.Label(root, text="Mensaje:", bg="#FFC107", fg="#FF0000").pack(pady=5)
+text_message = tk.Text(root, height=10, width=50)
+text_message.pack(pady=5)
+
+test_mode_var = tk.BooleanVar()
+tk.Checkbutton(root, text="Modo de prueba", variable=test_mode_var, bg="#FFC107", fg="#FF0000").pack(pady=5)
+
+frame_buttons = tk.Frame(root, bg="#FFC107")
+frame_buttons.pack(pady=20)
+
+tk.Button(frame_buttons, text="Enviar SMS", command=enviar_sms, bg="#FF0000", fg="white").pack(side=tk.LEFT, padx=10)
+tk.Button(frame_buttons, text="Limpiar", command=limpiar_campos, bg="#FF0000", fg="white").pack(side=tk.LEFT, padx=10)
+tk.Button(frame_buttons, text="Cerrar", command=cerrar_ventana, bg="#FF0000", fg="white").pack(side=tk.LEFT, padx=10)
+tk.Button(frame_buttons, text="Copiar", command=copiar_mensaje, bg="#FF0000", fg="white").pack(side=tk.LEFT, padx=10)
+tk.Button(frame_buttons, text="Guardar", command=guardar_mensaje, bg="#FF0000", fg="white").pack(side=tk.LEFT, padx=10)
+tk.Button(frame_buttons, text="Cargar", command=cargar_mensaje, bg="#FF0000", fg="white").pack(side=tk.LEFT, padx=10)
+
+status_label = tk.Label(root, text="", bg="#FFC107", fg="red")
+status_label.pack(pady=10)
+
+root.mainloop()
