@@ -1,6 +1,6 @@
 # SMS Phishing Sender
 
-![SMS Phishing Sender](./img/smsimg.png)
+![SMS Phishing Sender](./img/cap.png)
 
 This project is a tool for sending SMS messages for educational and security testing purposes. **It should not be used for malicious or illegal activities**.
 
